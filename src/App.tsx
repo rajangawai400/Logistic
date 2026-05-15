@@ -66,6 +66,7 @@ export default function App() {
   const [isInsightLoading, setIsInsightLoading] = useState(false);
   const [isRateLoading, setIsRateLoading] = useState(false);
   const [lastReason, setLastReason] = useState<string | null>(null);
+  const [goldState, setGoldState] = useState<{ rate: number, change: number }>({ rate: 72500, change: 0 });
 
   // --- Calculations ---
   const logisticsData = useMemo(() => {
@@ -156,10 +157,15 @@ export default function App() {
         oceanFreight20ft: data.oceanFreight20ft,
         oceanFreight40ft: data.oceanFreight40ft
       }));
+      setGoldState({ rate: data.goldRate, change: data.goldChange });
       setLastReason(data.reason);
     }
     setIsRateLoading(false);
   };
+
+  useEffect(() => {
+    syncLiveRates();
+  }, []);
 
   return (
     <div className="min-h-screen bg-bg text-text selection:bg-accent/30 p-6 flex flex-col gap-6 max-h-screen overflow-hidden">
@@ -239,6 +245,40 @@ export default function App() {
             </motion.div>
           );
         })}
+        
+        {/* Live Gold Widget */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="flex-1 min-w-[180px] bg-accent/5 border border-accent/20 rounded-lg p-3 flex justify-between items-center group hover:bg-accent/10 transition-all cursor-default"
+        >
+          <div className="flex flex-col">
+            <span className="text-[9px] font-bold text-accent-light uppercase tracking-tighter">Gold (24K/10g)</span>
+            <span className="text-[10px] font-mono text-text-dim/60 leading-none mt-1">Market Spot</span>
+          </div>
+          <div className="text-right">
+            <div className="text-xs font-bold text-text font-mono flex items-center justify-end gap-2">
+              {isRateLoading ? (
+                <Loader2 size={12} className="animate-spin text-accent" />
+              ) : goldState.rate ? (
+                formatCurrency(goldState.rate)
+              ) : (
+                '--'
+              )}
+            </div>
+            <div className={`text-[9px] font-bold flex items-center justify-end gap-0.5 mt-1 ${goldState.change >= 0 ? 'text-success/70' : 'text-error'}`}>
+              {isRateLoading ? (
+                <span className="text-[8px] animate-pulse">Syncing...</span>
+              ) : (
+                <>
+                  <TrendingUp size={10} className={goldState.change >= 0 ? 'text-accent' : 'text-error rotate-180'} />
+                  {formatDelta(goldState.change)}
+                </>
+              )}
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       <main className="main-layout grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 flex-grow min-height-0 overflow-hidden">

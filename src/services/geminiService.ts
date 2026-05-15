@@ -29,9 +29,9 @@ export async function fetchLiveRates() {
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: "As a logistics expert analyst, provide the current (May 2026) estimated ocean freight rates for 20ft and 40ft containers from JNPT (Nhava Sheva) to major European ports. Return the rates in INR as a simple JSON object: { oceanFreight20ft: number, oceanFreight40ft: number, reason: string }. The reason should be a short 10-word market context.",
+      contents: "As a logistics and financial analyst, provide the current (May 2026) estimated ocean freight rates for 20ft and 40ft from JNPT to Europe, and the 24K Gold price (per 10g). Return a JSON object: { oceanFreight20ft: number, oceanFreight40ft: number, goldRate: number, goldChange: number, reason: string }. The goldChange is the INR change from the previous day.",
       config: {
-        systemInstruction: "You are a logistics pricing expert. Provide realistic estimated market rates for May 2026. Only return valid JSON.",
+        systemInstruction: "You are a market pricing expert. Provide realistic May 2026 estimates. Return ONLY valid JSON.",
         responseMimeType: "application/json",
       },
     });
