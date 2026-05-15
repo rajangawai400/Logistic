@@ -1,0 +1,6 @@
+{
+  "name": "Export Logistics Workspace",
+  "description": "Dynamic pricing dashboard for JNPT origin export freight and ground rent tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
